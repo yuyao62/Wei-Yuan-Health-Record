@@ -24,7 +24,12 @@ input,select,button{font-size:16px}.top-info{flex-direction:column}.qr-mini{flex
 #recordsSection{scroll-margin-top:15px}.entry-actions .edit-action{background:#117b87;color:#fff;font-size:1rem;padding:12px 20px;border-radius:12px}
 #editBanner{font-size:1.03rem} .version-caption{color:#647783;font-size:.78rem;margin-top:10px}
 </style>
-</head>
+<style>
+.reward-toast{position:fixed;z-index:9999;top:50%;left:50%;transform:translate(-50%,-50%);width:min(340px,88vw);box-sizing:border-box;padding:24px 16px;text-align:center;background:#fff;border:2px solid #16876b;border-radius:22px;box-shadow:0 10px 60px #0005;color:#175b48;font-size:19px;isolation:isolate}
+.reward-title{font-size:24px;font-weight:800;margin:8px 0}.reward-symbol{font-size:64px;animation:wy-pop .8s ease-out}.reward-toast button{margin-top:14px}.reward-spin .reward-symbol{animation:wy-spin 1s ease-out}.reward-grow .reward-symbol{animation:wy-grow 1.2s ease-out}.reward-stars .reward-symbol{animation:wy-grow .9s ease-out}.reward-particle{position:absolute;left:50%;top:35%;pointer-events:none;animation:wy-burst 1.7s ease-out both;z-index:-1}
+@keyframes wy-pop{0%{transform:scale(.2)}65%{transform:scale(1.2)}100%{transform:scale(1)}}@keyframes wy-spin{from{transform:rotateY(0) scale(.4)}to{transform:rotateY(360deg) scale(1)}}@keyframes wy-grow{from{transform:scale(.2);opacity:.3}to{transform:scale(1);opacity:1}}@keyframes wy-burst{from{transform:translate(0,0);opacity:1}to{transform:translate(var(--dx),var(--dy));opacity:0}}
+@media(prefers-reduced-motion:reduce){.reward-symbol,.reward-particle{animation:none!important}.reward-particle{display:none}}
+</style></head>
 <body><div style="padding:12px;text-align:center;background:#f0f7f3"><a style="color:#166534" href="https://yuyao62.github.io/Wei-Yuan-Community-Pharmacy/">返回維元社區藥局首頁</a></div>
 <header><div class="wrap"><h1>我的血壓與血糖紀錄</h1><p>維元社區藥局｜每位民眾使用自己的手機紀錄，資料不會傳到藥局或 GitHub。</p></div></header>
 <main>
@@ -38,7 +43,7 @@ input,select,button{font-size:16px}.top-info{flex-direction:column}.qr-mini{flex
 <section class="card"><h2>血壓趨勢</h2><canvas id="bpChart" role="img" aria-label="血壓測量趨勢圖"></canvas><p class="hint">收縮壓與舒張壓依時間繪圖，圖表只供追蹤紀錄。</p><h2>血糖趨勢</h2><canvas id="sugarChart" role="img" aria-label="血糖測量趨勢圖"></canvas><p class="hint">不同進食時段的數值不宜直接當成同一標準比較。</p></section>
 <section class="card"><h2>保存與恢復紀錄</h2><div id="backupReminder" class="backup-line" role="status" aria-live="polite"></div><p class="hint">Android 和 iPhone 都可以使用。建議定期備份，換手機前也請先備份。</p><div class="backup-actions"><button type="button" class="primary" id="backupBtn">↓ 備份我的紀錄</button><button type="button" class="secondary" id="restoreBtn">↑ 恢復我的紀錄</button><input type="file" id="restoreFile" accept="application/json,.json"></div><p class="hint">① 備份：按下後請確認檔案已存到手機「下載」或「檔案」，也可以自行存到 Google 雲端硬碟或 iCloud Drive。<br>② 恢復：在新手機開啟本頁，選擇先前保存的備份檔，即可取回紀錄。</p><p id="backupStatus" class="hint" role="status" aria-live="polite"></p><details><summary>備份檔存在手機哪裡？點這裡看</summary><p><strong>iPhone：</strong>通常可在「檔案」App →「瀏覽」→「下載項目」（可能在 iCloud Drive 或我的 iPhone）找到。<br><strong>Android：</strong>通常可在「檔案／Files」App →「下載／Downloads」找到。也可在瀏覽器的下載清單中查看。不同手機及瀏覽器的位置可能不同。<br>若要跨手機保存，請自行把備份檔移至 iCloud Drive、Google 雲端硬碟等安全位置。<strong>備份只會下載檔案，不會自動上傳雲端。</strong></p></details><div class="row"><button type="button" class="secondary" id="csvBtn">下載看診紀錄（表格）</button></div><p class="hint">看診紀錄可提供醫師參考，但不能用來恢復資料。掃描 QR Code 不會自動同步舊手機紀錄。</p><details><summary>進階設定：清除全部紀錄</summary><p class="hint">此操作無法復原。建議先確認備份檔能讀取。</p><div class="row"><button type="button" class="danger" id="clearBtn">刪除本機全部紀錄</button></div></details></section>
 <section class="card"><h2>把健康紀錄放到手機桌面</h2><p class="hint">下次直接點桌面圖示即可開啟，像使用 App 一樣方便。請使用平常紀錄的同一個瀏覽器。</p><details><summary>iPhone（Safari）操作教學</summary><p>① 使用 Safari 開啟這個網頁。<br>② 點下方的「分享」圖示（方框向上箭頭）。<br>③ 往下找到「加入主畫面」，再點「加入」。<br>如果沒看到，請在分享選單向下尋找或確認是否使用 Safari。</p></details><details><summary>Android（Chrome）操作教學</summary><p>① 使用 Chrome 開啟這個網頁。<br>② 點右上角「⋮」選單。<br>③ 選「加到主畫面」或「安裝應用程式」，依畫面確認。不同手機選項名稱可能不同。</p></details><p class="hint">提醒：桌面圖示只是捷徑，不代表資料已同步或自動備份。</p></section><section class="card"><div class="notice warning"><strong>健康提醒：</strong>本頁僅用來記錄數值，不提供診斷或自動調藥。若感到胸痛、呼吸困難、意識異常等症狀，請立即尋求緊急醫療協助；對於異常讀值請與醫師或藥師確認。</div></section>
-</main><footer><div class="version-caption">健康紀錄長輩簡易版 v1.3（健康成就）</div>維元社區藥局｜個人健康管理工具<br>使用者資料僅保存在本機瀏覽器，網站不設定健康資料上傳功能。</footer>
+</main><footer><div class="version-caption">健康紀錄長輩簡易版 v1.4（健康成就動畫）</div>維元社區藥局｜個人健康管理工具<br>使用者資料僅保存在本機瀏覽器，網站不設定健康資料上傳功能。</footer>
 <script>
 'use strict';
 const KEY='weiyuan-health-records-v1';
@@ -56,10 +61,60 @@ function cancelEdit(){editingId=null;$('recordForm').reset();fillNow();$('saveBt
 $('cancelEdit').onclick=cancelEdit;
 function editRecord(id){const r=records.find(x=>x.id===id);if(!r)return;editingId=id;switchTab(r.kind);$('date').value=r.date;$('time').value=r.time;$('note').value=r.note;if(r.kind==='bp'){$('sys').value=r.sys;$('dia').value=r.dia;$('pulse').value=r.pulse??'';$('bpPeriod').value=r.period}else{$('glucose').value=r.glucose;$('meal').value=r.period}$('saveBtn').textContent='儲存修改';$('cancelEdit').classList.remove('hidden');$('editBanner').classList.remove('hidden');$('recordForm').scrollIntoView({behavior:'smooth',block:'start'})}
 $('recordForm').addEventListener('submit',ev=>{ev.preventDefault();const date=$('date').value,time=$('time').value,note=$('note').value.trim();const v={id:editingId||(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(36).slice(2)}`),date,time,note,kind};if(kind==='bp'){v.sys=Number($('sys').value);v.dia=Number($('dia').value);v.pulse=$('pulse').value?Number($('pulse').value):null;v.period=$('bpPeriod').value;if(!$('sys').value||!$('dia').value||v.sys<=v.dia){$('message').textContent='請確認收縮壓、舒張壓數值，且收縮壓應大於舒張壓。';return}}else{v.glucose=Number($('glucose').value);v.period=$('meal').value;if(!$('glucose').value){$('message').textContent='請輸入血糖數值。';return}}if(!validRecord(v)){$('message').textContent='欄位格式有誤，請重新確認。';return}
-const previous=records;records=editingId?records.map(r=>r.id===editingId?v:r):[...records,v];if(!save()){records=previous;return}cancelEdit();$('message').textContent='紀錄已儲存！';render()});
+const previous=records;records=editingId?records.map(r=>r.id===editingId?v:r):[...records,v];if(!save()){records=previous;return}cancelEdit();$('message').textContent='紀錄已儲存！';render();celebrateRewards(previous,records)});
 function renderAverages(){const el=$('averages');el.replaceChildren();addText(el,'最近 7 天與 30 天平均（依測量日期）').style.fontWeight='700';for(const days of [7,30]){const base=new Date();base.setHours(0,0,0,0);base.setDate(base.getDate()-(days-1));const group=records.filter(r=>{const d=new Date(r.date+'T00:00:00');return d>=base&&d<=new Date()});const bp=group.filter(r=>r.kind==='bp');const sugar=group.filter(r=>r.kind==='sugar');const average=(arr,k)=>Math.round(arr.reduce((sum,r)=>sum+r[k],0)/arr.length);addText(el,`${days} 天血壓：${bp.length?average(bp,'sys')+'/'+average(bp,'dia')+' mmHg（'+bp.length+' 筆）':'尚無紀錄'}`,'meta');if(sugar.length){const periods=[...new Set(sugar.map(r=>r.period))];for(const period of periods){const list=sugar.filter(r=>r.period===period);addText(el,`${days} 天血糖（${period}）：${average(list,'glucose')} mg/dL（${list.length} 筆）`,'meta')}}else addText(el,`${days} 天血糖：尚無紀錄`,'meta')}}
 function selected(){let cutoff=null;const day=Number($('days').value);if(day){cutoff=new Date();cutoff.setHours(0,0,0,0);cutoff.setDate(cutoff.getDate()-(day-1))}const flt=$('filter').value;return records.filter(r=>(flt==='all'||r.kind===flt)&&(!cutoff||new Date(`${r.date}T00:00:00`)>=cutoff)).sort((a,b)=>(b.date+' '+b.time).localeCompare(a.date+' '+a.time))}
 function addText(el,text,cls){const n=document.createElement('div');n.textContent=text;if(cls)n.className=cls;el.append(n);return n}
+
+
+function rewardStages(rs){
+ const today=nowLocal().slice(0,10), now=new Date(today+'T12:00:00');
+ const key=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+ const shift=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+ const dates=new Set(rs.filter(r=>r.date<=today).map(r=>r.date));
+ let streak=0;while(dates.has(key(shift(now,-streak))))streak++;
+ const mon=shift(now,-((now.getDay()+6)%7)), month=n=>new Date(now.getFullYear(),now.getMonth()+n,1,12);
+ const count=(a,b)=>[...dates].filter(d=>d>=key(a)&&d<key(b)).length;
+ const w=count(mon,shift(mon,7)),pw=count(shift(mon,-7),mon),m=count(month(0),month(1)),pm=count(month(-1),month(0));
+ return [
+ ['first','🎉','健康起步','首次完成健康紀錄',dates.size>0,'confetti'],
+ ['3','⭐','連續 3 天','每天記錄，繼續加油！',streak>=3,'stars'],
+ ['7','🥉','連續 7 天','健康習慣更進一步！',streak>=7,'pop'],
+ ['14','🥈','連續 14 天','持之以恆，真棒！',streak>=14,'spin'],
+ ['30','🥇','連續 30 天','健康紀錄毅力王！',streak>=30,'fireworks'],
+ ['week-'+key(mon),'🌱','每週紀錄進步獎','比上週多記錄幾天！',pw>0&&w>pw,'grow'],
+ ['month-'+key(month(0)),'🏆','每月紀錄進步獎','比上月多記錄幾天！',pm>0&&m>pm,'trophy']
+ ];
+}
+const REWARD_KEY='weiyuan-health-reward-animation-v1';
+let rewardQueue=[],rewardPlaying=false;
+function rewardSeen(){try{return new Set(JSON.parse(localStorage.getItem(REWARD_KEY)||'[]'))}catch{return new Set()}}
+function celebrateRewards(before,after){
+ const seen=rewardSeen(),old=new Set(rewardStages(before).filter(x=>x[4]).map(x=>x[0]));
+ const fresh=rewardStages(after).filter(x=>x[4]&&!old.has(x[0])&&!seen.has(x[0]));
+ if(!fresh.length)return;
+ fresh.forEach(x=>seen.add(x[0]));try{localStorage.setItem(REWARD_KEY,JSON.stringify([...seen]))}catch{}
+ rewardQueue.push(...fresh);playReward();
+}
+function playReward(){
+ if(rewardPlaying||!rewardQueue.length)return;
+ rewardPlaying=true;const [,emoji,title,desc,,effect]=rewardQueue.shift();
+ const panel=document.createElement('div');panel.className='reward-toast reward-'+effect;panel.setAttribute('role','status');
+ const symbol=addText(panel,emoji,'reward-symbol');symbol.setAttribute('aria-hidden','true');
+ addText(panel,'恭喜！'+title,'reward-title');addText(panel,desc);
+ const close=document.createElement('button');close.type='button';close.className='secondary';close.textContent='關閉';panel.append(close);
+ document.body.append(panel);
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if(!reduced&&['confetti','stars','fireworks','trophy'].includes(effect)){
+ for(let i=0;i<24;i++){const p=addText(panel,effect==='stars'?'★':effect==='fireworks'?'✦':'▪','reward-particle');p.setAttribute('aria-hidden','true');p.style.setProperty('--dx',Math.round(Math.cos(i*2.4)*(75+i*4))+'px');p.style.setProperty('--dy',Math.round(Math.sin(i*2.4)*(75+i*4))+'px');p.style.color=['#efb52b','#16876b','#4285c5','#e77786'][i%4];}
+ }
+ let timer;const finish=()=>{clearTimeout(timer);panel.remove();rewardPlaying=false;playReward()};close.onclick=finish;timer=setTimeout(finish,3000);
+}
+function renderRewardStages(el){
+ addText(el,'連續紀錄與進步獎勵').style.fontWeight='700';
+ for(const x of rewardStages(records)){const row=addText(el,x[1]+' '+x[2]+' · '+(x[4]?'已達成':'尚未達成'));row.style.cssText='padding:8px;border-radius:8px;margin:4px 0;background:'+(x[4]?'#e5f5eb':'#f5f7fa');}
+ const demo=document.createElement('button');demo.type='button';demo.className='secondary';demo.textContent='預覽獎勵動畫';demo.onclick=()=>{if(!rewardPlaying){rewardQueue.push(...rewardStages(records));playReward()}};el.append(demo);
+}
 
 function renderAchievements(){
  const el=$('achievementBody'),cmp=$('healthCompare');el.replaceChildren();cmp.replaceChildren();
@@ -79,6 +134,7 @@ function renderAchievements(){
  }
  const badges=[['🌱 健康起步',records.some(r=>r.date<=today)],['🥉 每週健康達人',count(w)>=5],['🥈 每月健康之星',count(m)>=20],['🥇 健康毅力王',[-2,-1,0].every(n=>count(subset(month(n),month(n+1)))>=20)],['❤️ 健康進步獎',(count(pw)>0&&count(w)>count(pw))||(count(pm)>0&&count(m)>count(pm))]];
  for(const [name,ok] of badges){const x=addText(el,name+' · '+(ok?'已達成':'尚未達成'));x.style.cssText='padding:9px 10px;margin:5px 0;border-radius:9px;background:'+(ok?'#e5f5eb':'#f5f7fa');x.style.fontWeight=ok?'700':'400'}
+ renderRewardStages(el);
  addText(el,'上週 '+count(pw)+' 天｜上月 '+count(pm)+' 天','hint');addText(el,'每天進步一點點，健康多一點！').style.color='#16734e';
  const avg=(rs,k)=>Math.round(rs.reduce((a,r)=>a+r[k],0)/rs.length);
  for(const [label,a,b] of [['本週／上週',w,pw],['本月／上月',m,pm]]){
